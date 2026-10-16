@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /productos/{productoId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['nombre', 'precio', 'descripcion', 'imagen', 'categoria', 'vendedor', 'vendedorId', 'creado', 'actualizado'])
+        && request.resource.data.vendedorId == request.auth.uid
+        && request.resource.data.vendedor is string
+        && request.resource.data.nombre is string
+        && request.resource.data.precio is number
+        && request.resource.data.descripcion is string
+        && request.resource.data.imagen is string
+        && request.resource.data.categoria in ['Productos', 'Servicios'];
+      allow update: if request.auth != null
+        && request.resource.data.keys().hasOnly(['nombre', 'precio', 'descripcion', 'imagen', 'categoria', 'vendedor', 'vendedorId', 'creado', 'actualizado'])
+        && resource.data.vendedorId == request.auth.uid
+        && request.resource.data.vendedorId == resource.data.vendedorId
+        && request.resource.data.creado == resource.data.creado
+        && request.resource.data.nombre is string
+        && request.resource.data.precio is number
+        && request.resource.data.descripcion is string
+        && request.resource.data.imagen is string
+        && request.resource.data.categoria in ['Productos', 'Servicios'];
+      allow delete: if request.auth != null
+        && resource.data.vendedorId == request.auth.uid;
+    }
+
+    match /perfiles/{usuarioId} {
+      // El teléfono se muestra a los compradores para contactar al vendedor.
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && request.auth.uid == usuarioId
+        && request.resource.data.keys().hasOnly(['usuario', 'telefono', 'actualizado'])
+        && request.resource.data.usuario is string
+        && request.resource.data.telefono is string;
+      allow delete: if request.auth != null
+        && request.auth.uid == usuarioId;
+    }
+  }
+}

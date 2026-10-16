@@ -1,0 +1,29 @@
+MARKETPLACE MUEY — archivos corregidos (sin publicar)
+
+Hallazgos del código entregado
+- El formulario guardaba las contraseñas en texto legible dentro de localStorage (cuentasMuey). Cualquier persona con acceso al navegador podía verlas; además, la “sesión” solo era una cadena local y no autenticaba al usuario ante Firebase.
+- No encontré en estos cinco archivos código explícito para robar datos, redirigir a una web desconocida ni descargar software. Esto no demuestra que Google Safe Browsing haya marcado la web específicamente por la contraseña: su pantalla roja también puede responder a una denuncia, contenido inyectado o una clasificación errónea.
+- El HTML de verificación de Google debe estar publicado exactamente como googleb119d36c214d43a0.html. Se incluye con el nombre que indica su contenido.
+
+Cambios realizados en estas copias
+- Reemplacé el registro/inicio de sesión local por Firebase Authentication (correo y contraseña). Ya no se escriben contraseñas en localStorage.
+- Las sesiones ahora dependen de Firebase Auth. Los datos personales de perfil y las publicaciones solo se consultan con sesión iniciada. Los productos nuevos guardan el UID del vendedor para que las reglas limiten edición y borrado a su propietario.
+- Incluí firestore.rules como ejemplo de reglas para proteger escrituras. No están aplicadas a tu proyecto hasta que el administrador las publique desde Firebase.
+- El CSS y el diseño principal se conservaron.
+
+Antes de desplegar estas copias
+1. En Firebase Console, habilita Authentication > Sign-in method > Email/Password.
+2. En Authentication > Settings > Authorized domains, agrega danitenorio21c-dot.github.io.
+3. Revisa las reglas de Firestore y compáralas con los datos actuales. Luego publica firestore.rules. No uses reglas abiertas de prueba.
+4. Revisa las políticas RLS del bucket de Supabase “FOTOS MUEY”. La clave publishable puede estar en el navegador, pero las políticas del bucket deben limitar las operaciones; Firebase Auth no protege automáticamente Supabase Storage.
+5. Revisa cómo se migrarán los productos/perfiles anteriores: los productos viejos no tienen vendedorId y no podrán editarse ni borrarse con la nueva autenticación hasta asignarles el UID correcto. Las cuentas antiguas guardadas en el navegador tampoco se migran; no reutilices sus contraseñas.
+6. Publica en GitHub Pages solo cuando hayas configurado y probado Firebase/Supabase. Esto no cambia la página publicada por sí solo.
+7. Si la página queda limpia, el propietario debe consultar Search Console > Problemas de seguridad y solicitar revisión. No se puede garantizar desde el código que la advertencia desaparezca automáticamente.
+
+Archivos
+- index.html
+- script.js
+- firebase.js
+- style.css
+- firestore.rules
+- googleb119d36c214d43a0.html (archivo de verificación)
